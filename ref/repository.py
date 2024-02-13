@@ -1,18 +1,21 @@
 from datetime import datetime, timedelta
+from typing import Sequence
+
+from fastapi_cache.decorator import cache
 
 from sqlalchemy import select, update, exists
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.models import User
-from logger import logger
+from utils.logger import logger
 
 
 class RefRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_referrals_by_id(self, id_: int):
+    async def get_referrals_by_id(self, id_: int) -> Sequence | None:
         try:
             exist_stmt = select(exists().where(User.id == id_))
             result = await self.session.execute(exist_stmt)
@@ -31,7 +34,8 @@ class RefRepository:
             logger.error(f"Error when receiving referrals by ID: {e}")
             raise
 
-    async def get_code_by_email(self, email: str) -> int | None:
+    @cache(expire=3600)
+    async def get_code_by_email(self, email: str) -> str | None:
         try:
             stmt = select(User.referral_code).where(User.email == email)
             result = await self.session.execute(stmt)
@@ -57,7 +61,7 @@ class RefRepository:
             logger.error(f"Error when receiving user ID by email: {e}")
             raise
 
-    async def get_referrals_by_email(self, email: str):
+    async def get_referrals_by_email(self, email: str) -> Sequence | None:
         try:
             user_id = await self.get_id_by_email(email)
             if user_id is not None:
@@ -85,7 +89,7 @@ class RefRepository:
             logger.error(f"Error when getting the user ID by code: {e}")
             raise
 
-    async def get_referrals_by_code(self, code: str):
+    async def get_referrals_by_code(self, code: str) -> Sequence | None:
         try:
             user_id = await self.get_id_by_code(code)
             if user_id is not None:
@@ -100,7 +104,7 @@ class RefRepository:
             logger.error(f"Error when receiving referrals by code: {e}")
             raise
 
-    async def create_code_for_user_by_id(self, id_: int, code: str, expiration: int):
+    async def create_code_for_user_by_id(self, id_: int, code: str, expiration: int) -> None:
         try:
             stmt = update(User).where(User.id == id_).values(
                 referral_code=code,
@@ -113,7 +117,7 @@ class RefRepository:
             logger.error(f"Error when creating code for the user: {e}")
             raise
 
-    async def delete_code_for_user_by_id(self, id_: int):
+    async def delete_code_for_user_by_id(self, id_: int) -> None:
         try:
             stmt = update(User).where(User.id == id_).values(referral_code=None, referral_code_expiration=None)
             await self.session.execute(stmt)

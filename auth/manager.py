@@ -6,7 +6,7 @@ from fastapi_users import BaseUserManager, IntegerIDMixin
 from .database import get_user_db
 from .models import User
 from config import settings
-from logger import logger
+from utils.logger import logger
 
 SECRET = settings.AUTH_MANAGER_SECRET
 

@@ -7,7 +7,10 @@ from . import schemas
 from .dependencies import get_auth_repository
 from .repository import AuthRepository
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/auth",
+    tags=["auth"],
+)
 
 
 @router.post("/register/", response_model=schemas.UserRead)

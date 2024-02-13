@@ -7,9 +7,12 @@ from db import get_async_session
 from .dependencies import get_ref_repository
 from .repository import RefRepository
 
-from utils import fastapi_users
+from utils.utils import fastapi_users
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/referrals",
+    tags=["referrals"]
+)
 
 
 @router.get("/my")
