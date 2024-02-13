@@ -25,16 +25,17 @@ class AuthRepository:
         if existing_user.one_or_none():
             raise HTTPException(status_code=400, detail="User with this email already exists")
 
+        referrer = None
+
         if referral_code:
             referrer = await self.get_referrer_by_code(referral_code)
             if referrer is None:
                 raise HTTPException(status_code=400, detail="Invalid referral code")
-
-            user.referrer_id = referrer.id
-
+        logger.info("123", referrer.id, referrer)
         user = user.dict()
         password = user.pop("password")
         db_user = models.User(**user)
+        db_user.referrer_id = referrer.id
         password_helper = PasswordHelper()
         db_user.hashed_password = password_helper.hash(password)
 
@@ -45,4 +46,4 @@ class AuthRepository:
             logger.error(e)
             raise HTTPException(status_code=500, detail="DB Error")
 
-        return db_user
+        return db_user.json()
