@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:15
+    container_name: stakewolle_db
+    restart: always
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
+      - .env-non-dev
+#    volumes:
+#      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: stakewolle_redis
+    restart: always
+    env_file:
+      - .env
+      - .env-non-dev
+#    volumes:
+#      - redis_data:/app/data
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stakewolle_server
+    command: sh -c "alembic upgrade head && python -m gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:7890"
+    ports:
+      - 8080:7890
+    restart: always
+    env_file:
+      - .env
+      - .env-non-dev
+    depends_on:
+      - db
+#    volumes:
+#      - server_data:/app/data
+
+#volumes:
+#  db_data:
+#  redis_data:
+#  server_data:
