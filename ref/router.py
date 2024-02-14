@@ -54,7 +54,7 @@ async def get_referrals_by_id(
 
 @router.get("/code_by_email/{email}")
 async def get_referrer_code_by_email(
-        email: str = Path(..., min_length=4, max_length=24, example="user@example.com"),
+        email: str = Path(..., example="user@example.com"),
         repository: RefRepository = Depends(get_ref_repository(get_async_session))
 ):
     email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
@@ -135,11 +135,11 @@ async def create_code(
     if user.referral_code:
         raise HTTPException(
             status_code=418,
-            detail=f"The code already exist ({user.referral_code} -"
+            detail=f"A code already exist ({user.referral_code} -"
                    f" expires {user.referral_code_expiration})")
 
-    refs = await repository.get_referrals_by_code(code)
-    if refs is not None:
+    code_exists = await repository.get_id_by_code(code)
+    if code_exists:
         raise HTTPException(
             status_code=403,
             detail="The code already exist. Use another one"
