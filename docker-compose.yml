@@ -38,6 +38,7 @@ services:
       - .env-non-dev
     depends_on:
       - db
+      - redis
 #    volumes:
 #      - server_data:/app/data
 
