@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Path, Body
 from fastapi.responses import JSONResponse, Response
 
 from db import get_async_session
+from utils.logger import logger
 from .dependencies import get_ref_repository
 from .repository import RefRepository
 
@@ -39,11 +40,13 @@ async def get_referrals_by_id(
     referrals = await repository.get_referrals_by_id(id_)
 
     if referrals is None:
+        logger.error(f"Referrer ID does not exist: {id_}")
         raise HTTPException(
             status_code=404,
             detail="Referrer ID does not exist",
         )
 
+    logger.info(f"Successfully retrieved referrals for ID: {id_}: {referrals}")
     return JSONResponse(
         content={
             "referrer": id_,
@@ -65,17 +68,20 @@ async def get_referrer_code_by_email(
     code = await repository.get_code_by_email(email)
 
     if code is None:
+        logger.error(f"The user with the email does not have a referral code: {email}")
         raise HTTPException(
             status_code=404,
             detail="The user with this email does not have a referral code",
         )
 
+    logger.info(f"Successfully retrieved referrer code by email: {email}: {code}")
     return JSONResponse(
         content={
             "code": code,
         },
         status_code=200
     )
+
 
 #
 # @router.get("/by_email/{email}")
@@ -136,6 +142,7 @@ async def create_code(
     expiration = expiration.replace(tzinfo=None)
 
     if user.referral_code:
+        logger.error(f"A code({user.referral_code}) already exist ({user.id})")
         raise HTTPException(
             status_code=418,
             detail=f"A code already exist ({user.referral_code} -"
@@ -143,6 +150,7 @@ async def create_code(
 
     code_exists = await repository.get_id_by_code(code)
     if code_exists:
+        logger.error(f"The code already exist {user.id}")
         raise HTTPException(
             status_code=403,
             detail="The code already exist. Use another one"
@@ -150,6 +158,7 @@ async def create_code(
 
     await repository.create_code_for_user_by_id(user.id, code, expiration)
 
+    logger.info(f"Successfully created code for ID: {user.id}; Code: {code}; Expiration: {expiration}")
     return JSONResponse(
         content={
             "code": code,
@@ -165,8 +174,10 @@ async def delete_code(
         repository: RefRepository = Depends(get_ref_repository(get_async_session)),
 ):
     if not user.referral_code:
+        logger.error(f"The code does not exist ({user.id})")
         raise HTTPException(status_code=418, detail="The code does not exist")
 
     await repository.delete_code_for_user_by_id(user.id)
 
+    logger.info(f"Successfully deleted code for ID: {user.id}")
     return Response(status_code=200)

@@ -65,7 +65,7 @@ curl -i -X POST -H "Content-Type: application/json" -d \
     "is_active": true,
     "is_superuser": false, 
     "is_verified": false
-  }' http://localhost:8080/auth/register/
+  }' http://localhost:8080/auth/register/\?referral_code=GADJIIAVOV
 ```
 
 ```
