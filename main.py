@@ -15,6 +15,7 @@ from ref.router import router as ref_router
 from auth.router import router as auth_router
 
 from config import settings
+from utils.logger import logger
 from utils.utils import fastapi_users
 
 app = FastAPI(
@@ -43,6 +44,15 @@ async def validation_exception_error(request: Request, exc: ValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder({'detail': exc.errors()})
+    )
+
+
+@app.exception_handler(Exception)
+async def internal_server_error(request: Request, exc: Exception):
+    logger.error(exc)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content=jsonable_encoder({'detail': "Internal Server Error"})
     )
 
 

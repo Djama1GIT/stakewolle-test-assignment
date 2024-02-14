@@ -1,7 +1,7 @@
 import re
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Path
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, HTTPException, Query, Path, Body
+from fastapi.responses import JSONResponse, Response
 
 from db import get_async_session
 from .dependencies import get_ref_repository
@@ -127,8 +127,8 @@ async def get_referrals_by_code(
 
 @router.post("/create_code")
 async def create_code(
-        code: str = Query(..., min_length=4, max_length=24, example="GADJIIAVOV", regex="^#?[a-zA-Z0-9]+$"),
-        expiration: int = Query(..., ge=1, example="7", description="days"),
+        code: str = Body(..., min_length=4, max_length=24, example="GADJIIAVOV", regex="^#?[a-zA-Z0-9]+$"),
+        expiration: int = Body(..., ge=1, example="7", description="days"),
         user=Depends(fastapi_users.current_user(active=True)),
         repository: RefRepository = Depends(get_ref_repository(get_async_session)),
 ):
@@ -166,7 +166,4 @@ async def delete_code(
 
     await repository.delete_code_for_user_by_id(user.id)
 
-    return JSONResponse(
-        content=None,
-        status_code=200
-    )
+    return Response(status_code=200)
