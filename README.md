@@ -1,7 +1,7 @@
 # Stakewolle Test Assignment
 
 Referral system
-с
+
 ## Installation and Setup
 
 1. Install Docker and Docker Compose if they are not already installed on your system.
