@@ -67,7 +67,7 @@ async def get_referrer_code_by_email(
     if code is None:
         raise HTTPException(
             status_code=404,
-            detail="Referrer email does not exist",
+            detail="The user with this email does not have a referral code",
         )
 
     return JSONResponse(
