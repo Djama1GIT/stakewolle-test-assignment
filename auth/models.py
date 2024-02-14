@@ -27,6 +27,6 @@ class User(Base):
             "is_superuser": self.is_superuser,
             "is_verified": self.is_verified,
             "referral_code": self.referral_code,
-            "referral_code_expiration": self.referral_code_expiration,
+            "referral_code_expiration": str(self.referral_code_expiration),
             "referrer_id": self.referrer_id,
         }

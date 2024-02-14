@@ -91,25 +91,7 @@ content-type: application/json
 }
 ```
 
-4. Getting information about your referrals:
-
-```bash
-curl -X GET -H "Cookie: fastapiusersauth=your_jwt_token" \
-  http://localhost:8080/referrals/my
-```
-
-```json
-{
-  "referrer": 1,
-  "referrals": [
-    115,
-    116,
-    117
-  ]
-}
-```
-
-5. Getting information about referrals by their ID:
+4. Getting information about referrals by their ID:
 
 ```bash
 curl -X GET http://localhost:8080/referrals/by_id/1
@@ -126,7 +108,7 @@ curl -X GET http://localhost:8080/referrals/by_id/1
 }
 ```
 
-6. Getting the referrer code by email:
+5. Getting the referrer code by email:
 
 ```bash
 curl -X GET http://localhost:8080/referrals/code_by_email/user@example.com
@@ -138,57 +120,23 @@ curl -X GET http://localhost:8080/referrals/code_by_email/user@example.com
 }
 ```
 
-7. Getting information about referrals by email:
-
-```bash
-curl -X GET http://localhost:8080/referrals/by_email/user@example.com
-```
-
-```json
-{
-  "referrer": "user@example.com",
-  "referrals": [
-    115,
-    116,
-    117
-  ]
-}
-```
-
-8. Getting information about referrals by code:
-
-```bash
-curl -X GET http://localhost:8080/referrals/by_code/GADJIIAVOV
-```
-
-```json
-{
-  "referrer": "GADJIIAVOV",
-  "referrals": [
-    115,
-    116,
-    117
-  ]
-}
-```
-
-9. Creating a referrer code:
+6. Creating a referrer code:
 
 ```bash
 curl -X POST -H "Content-Type: application/json" \
   -H "Cookie: fastapiusersauth=your_jwt_token" \
-  -d '{"code": "GADJIIAVOV", "expiration": 7}' \
+  -d '{"code": "GADJIIAVOV", "expiration": "2024-02-24T12:00:00.000Z"}' \
   http://localhost:8080/referrals/create_code
 ```
 
 ```json
 {
   "code": "GADJIIAVOV",
-  "expiration": 7
+  "expiration": "2024-02-24T12:00:00.000Z"
 }
 ```
 
-10. Deleting a referrer code:
+7. Deleting a referrer code:
 
 ```bash
 curl -i -X DELETE -H "Cookie: fastapiusersauth=your_jwt_token" \
@@ -212,7 +160,7 @@ content-type: application/json
 ```
 ```json
 {
-  "detail": "Invalid Email (for example)"
+  "detail": "Registration at this email address is not available"
 }
 ```
 

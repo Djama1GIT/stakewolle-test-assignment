@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Sequence
 
 from fastapi_cache.decorator import cache
@@ -104,11 +104,11 @@ class RefRepository:
     #         logger.error(f"Error when receiving referrals by code: {e}")
     #         raise
 
-    async def create_code_for_user_by_id(self, id_: int, code: str, expiration: int) -> None:
+    async def create_code_for_user_by_id(self, id_: int, code: str, expiration: datetime) -> None:
         try:
             stmt = update(User).where(User.id == id_).values(
                 referral_code=code,
-                referral_code_expiration=datetime.now() + timedelta(days=expiration),
+                referral_code_expiration=expiration,
             )
             await self.session.execute(stmt)
             await self.session.commit()

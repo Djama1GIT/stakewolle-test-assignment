@@ -1,3 +1,4 @@
+import datetime
 import re
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Path, Body
@@ -128,10 +129,12 @@ async def get_referrer_code_by_email(
 @router.post("/create_code")
 async def create_code(
         code: str = Body(..., min_length=4, max_length=24, example="GADJIIAVOV", regex="^#?[a-zA-Z0-9]+$"),
-        expiration: int = Body(..., ge=1, example="7", description="days"),
+        expiration: datetime.datetime = Body(..., example="2024-02-24T12:00:00.000Z"),
         user=Depends(fastapi_users.current_user(active=True)),
         repository: RefRepository = Depends(get_ref_repository(get_async_session)),
 ):
+    expiration = expiration.replace(tzinfo=None)
+
     if user.referral_code:
         raise HTTPException(
             status_code=418,
@@ -150,7 +153,7 @@ async def create_code(
     return JSONResponse(
         content={
             "code": code,
-            "expiration": expiration,
+            "expiration": str(expiration),
         },
         status_code=200
     )
