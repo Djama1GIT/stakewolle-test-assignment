@@ -15,19 +15,19 @@ router = APIRouter(
 )
 
 
-@router.get("/my")
-async def my(
-        repository: RefRepository = Depends(get_ref_repository(get_async_session)),
-        user=Depends(fastapi_users.current_user(active=True))
-):
-    referrals = await repository.get_referrals_by_id(user.id)
-    return JSONResponse(
-        content={
-            "referrer": user.id,
-            "referrals": referrals
-        },
-        status_code=200
-    )
+# @router.get("/my")
+# async def my(
+#         repository: RefRepository = Depends(get_ref_repository(get_async_session)),
+#         user=Depends(fastapi_users.current_user(active=True))
+# ):
+#     referrals = await repository.get_referrals_by_id(user.id)
+#     return JSONResponse(
+#         content={
+#             "referrer": user.id,
+#             "referrals": referrals
+#         },
+#         status_code=200
+#     )
 
 
 @router.get("/by_id/{id_:int}")
@@ -76,53 +76,53 @@ async def get_referrer_code_by_email(
         status_code=200
     )
 
-
-@router.get("/by_email/{email}")
-async def get_referrals_by_email(
-        email: str = Path(..., min_length=4, max_length=24, example="user@example.com"),
-        repository: RefRepository = Depends(get_ref_repository(get_async_session))
-):
-    email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    if not re.match(email_regex, email):
-        raise HTTPException(status_code=404, detail="Invalid Email")
-
-    referrals = await repository.get_referrals_by_email(email)
-
-    if referrals is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Referrer email does not exist",
-        )
-
-    return JSONResponse(
-        content={
-            "referrer": email,
-            "referrals": referrals
-        },
-        status_code=200
-    )
-
-
-@router.get("/by_code/{code}")
-async def get_referrals_by_code(
-        code: str = Path(..., min_length=4, max_length=24, example="GADJIIAVOV", regex="^#?[a-zA-Z0-9]+$"),
-        repository: RefRepository = Depends(get_ref_repository(get_async_session))
-):
-    referrals = await repository.get_referrals_by_code(code)
-
-    if referrals is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Referrer code does not exist",
-        )
-
-    return JSONResponse(
-        content={
-            "referrer": code,
-            "referrals": referrals,
-        },
-        status_code=200
-    )
+#
+# @router.get("/by_email/{email}")
+# async def get_referrals_by_email(
+#         email: str = Path(..., min_length=4, max_length=24, example="user@example.com"),
+#         repository: RefRepository = Depends(get_ref_repository(get_async_session))
+# ):
+#     email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+#     if not re.match(email_regex, email):
+#         raise HTTPException(status_code=404, detail="Invalid Email")
+#
+#     referrals = await repository.get_referrals_by_email(email)
+#
+#     if referrals is None:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="Referrer email does not exist",
+#         )
+#
+#     return JSONResponse(
+#         content={
+#             "referrer": email,
+#             "referrals": referrals
+#         },
+#         status_code=200
+#     )
+#
+#
+# @router.get("/by_code/{code}")
+# async def get_referrals_by_code(
+#         code: str = Path(..., min_length=4, max_length=24, example="GADJIIAVOV", regex="^#?[a-zA-Z0-9]+$"),
+#         repository: RefRepository = Depends(get_ref_repository(get_async_session))
+# ):
+#     referrals = await repository.get_referrals_by_code(code)
+#
+#     if referrals is None:
+#         raise HTTPException(
+#             status_code=404,
+#             detail="Referrer code does not exist",
+#         )
+#
+#     return JSONResponse(
+#         content={
+#             "referrer": code,
+#             "referrals": referrals,
+#         },
+#         status_code=200
+#     )
 
 
 @router.post("/create_code")

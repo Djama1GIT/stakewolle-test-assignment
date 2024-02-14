@@ -265,7 +265,7 @@ content-type: application/json
 - Docker - A platform used in the project for creating, deploying, and managing containers, allowing the application
   to run in an isolated environment.
 
-## Technical Specification
+## Terms of Reference
 
 A simple RESTful API service for a referral system needs to be developed.
 

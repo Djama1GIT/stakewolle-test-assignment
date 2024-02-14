@@ -61,20 +61,20 @@ class RefRepository:
             logger.error(f"Error when receiving user ID by email: {e}")
             raise
 
-    async def get_referrals_by_email(self, email: str) -> Sequence | None:
-        try:
-            user_id = await self.get_id_by_email(email)
-            if user_id is not None:
-                stmt = select(User.id).where(User.referrer_id == user_id)
-                result = await self.session.execute(stmt)
-                referrals = result.scalars().all()
-                return referrals
-            else:
-                return None
-        except SQLAlchemyError as e:
-            await self.session.rollback()
-            logger.error(f"Error when receiving referrals by email: {e}")
-            raise
+    # async def get_referrals_by_email(self, email: str) -> Sequence | None:
+    #     try:
+    #         user_id = await self.get_id_by_email(email)
+    #         if user_id is not None:
+    #             stmt = select(User.id).where(User.referrer_id == user_id)
+    #             result = await self.session.execute(stmt)
+    #             referrals = result.scalars().all()
+    #             return referrals
+    #         else:
+    #             return None
+    #     except SQLAlchemyError as e:
+    #         await self.session.rollback()
+    #         logger.error(f"Error when receiving referrals by email: {e}")
+    #         raise
 
     async def get_id_by_code(self, code: str) -> int | None:
         try:
@@ -89,20 +89,20 @@ class RefRepository:
             logger.error(f"Error when getting the user ID by code: {e}")
             raise
 
-    async def get_referrals_by_code(self, code: str) -> Sequence | None:
-        try:
-            user_id = await self.get_id_by_code(code)
-            if user_id is not None:
-                stmt = select(User.id).where(User.referrer_id == user_id)
-                result = await self.session.execute(stmt)
-                referrals = result.scalars().all()
-                return referrals
-            else:
-                return None
-        except SQLAlchemyError as e:
-            await self.session.rollback()
-            logger.error(f"Error when receiving referrals by code: {e}")
-            raise
+    # async def get_referrals_by_code(self, code: str) -> Sequence | None:
+    #     try:
+    #         user_id = await self.get_id_by_code(code)
+    #         if user_id is not None:
+    #             stmt = select(User.id).where(User.referrer_id == user_id)
+    #             result = await self.session.execute(stmt)
+    #             referrals = result.scalars().all()
+    #             return referrals
+    #         else:
+    #             return None
+    #     except SQLAlchemyError as e:
+    #         await self.session.rollback()
+    #         logger.error(f"Error when receiving referrals by code: {e}")
+    #         raise
 
     async def create_code_for_user_by_id(self, id_: int, code: str, expiration: int) -> None:
         try:
