@@ -31,7 +31,7 @@ async def create_user(
         if referrer.referral_code_expiration < datetime.now():
             raise HTTPException(status_code=400, detail="Referral code is expired")
 
-    if not repository.email_exists(user.email):
+    if repository.email_exists(user.email):
         raise HTTPException(status_code=400, detail="User with this email already exists")
 
     if not hunter_client.email_allowed(user.email):
