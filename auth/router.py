@@ -35,7 +35,8 @@ async def create_user(
     if email_exists:
         raise HTTPException(status_code=400, detail="User with this email already exists")
 
-    if not hunter_client.email_allowed(user.email):
+    email_allowed = await hunter_client.email_allowed(user.email)
+    if not email_allowed:
         raise HTTPException(status_code=400, detail="Registration at this email address is not available")
 
     user = await repository.create_user(user, referral_code)

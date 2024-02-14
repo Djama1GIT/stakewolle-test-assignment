@@ -1,4 +1,6 @@
 import requests
+from fastapi_cache.decorator import cache
+from requests import RequestException
 
 from config import settings
 from utils.logger import logger
@@ -11,9 +13,17 @@ class HunterEmailVerifierClient:
         self.api_key = api_key
 
     def verify_email(self, email: str) -> dict:
-        url = f"{self.BASE_URL}/email-verifier?email={email}&api_key={self.api_key}"
-        response = requests.get(url)
-        response_json = response.json()
+        try:
+            url = f"{self.BASE_URL}/email-verifier?email={email}&api_key={self.api_key}"
+            response = requests.get(url)
+            response_json = response.json()
+            if response.status_code > 400:
+                logger.error(response_json)
+                response_json = {}
+        except RequestException as e:
+            response_json = {}
+            logger.error(e)
+
         logger.info(response_json)
         return response_json
 
@@ -31,5 +41,6 @@ class HunterEmailVerifierClient:
         status = data.get("status", "accept_all")
         return status
 
+    @cache(expire=180)
     def email_allowed(self, email: str) -> bool:
         return self.get_email_status(email) not in ["disposable", "invalid"]

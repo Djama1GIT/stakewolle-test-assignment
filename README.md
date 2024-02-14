@@ -1,5 +1,7 @@
 # Stakewolle Test Assignment
 
+Referral system
+с
 ## Installation and Setup
 
 1. Install Docker and Docker Compose if they are not already installed on your system.
@@ -281,7 +283,7 @@ A simple RESTful API service for a referral system needs to be developed.
 
 - <strike>Use <a href="clearbit.com/platform/enrichment">clearbit.com/platform/enrichment</a>
 to obtain additional user information during registration;</strike>❌
-- Use <a href="emailhunter.co">emailhunter.co</a> to verify the specified email address ⌛
+- Use <a href="emailhunter.co">emailhunter.co</a> to verify the specified email address ✅
 - Cache referral codes using in-memory database ✅
 - Readme.md file with project description and instructions for deployment and testing ✅
 
